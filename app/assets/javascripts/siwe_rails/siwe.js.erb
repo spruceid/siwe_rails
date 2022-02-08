@@ -1,0 +1,141 @@
+const Web3Modal = window.Web3Modal.default;
+
+const env = {
+  prefix: '<%= SiweRails.prefix %>',
+  network: '<%= SiweRails.network %>',
+  INFURA_ID: '<%= SiweRails.infura %>',
+  TORUS: '<%= SiweRails.torus %>',
+  PORTIS_ID: '<%= SiweRails.portis %>',
+  FORTMATIC_KEY: '<%= SiweRails.fortmatic %>',
+  COINBASE: '<%= SiweRails.coinbase %>',
+};
+
+const providerOptions = (() => {
+  const opt = {};
+
+  if (env.INFURA_ID) {
+    opt.walletconnect = {
+      package: Web3Bundle.WalletConnectProvider,
+      options: {
+        infuraId: env.INFURA_ID,
+        pollingInterval: 100000,
+      }
+    };
+  }
+
+  if (env.TORUS) {
+    opt.torus = {
+      package: Web3Bundle.Torus,
+    };
+  }
+
+  if (env.PORTIS_ID)  {
+    opt.portis = {
+      package: Web3Bundle.Portis,
+      options: {
+        id: env.PORTIS_ID,
+      },
+    };
+  }
+
+  if (env.FORTMATIC_KEY) {
+    opt.fortmatic = {
+      package: Web3Bundle.Fortmatic,
+      options: {
+        key: env.FORTMATIC_KEY,
+      },
+    };
+  }
+
+  if (env.COINBASE && env.INFURA_ID) {
+    opt['custom-coinbase'] = {
+      display: {
+        logo: '<%= asset_path "siwe_rails/coinbase.svg" %>',
+        name: 'Coinbase',
+        description: 'Scan with WalletLink to connect',
+      },
+      options: {
+        appName: 'Sign-In with Ethereum',
+        networkUrl: `https://${env.network}.infura.io/v3/${env.INFURA_ID}`,
+        chainId: 1,
+        darkMode: false,
+      },
+      package: Web3Bundle.WalletLink,
+      connector: async (_, options) => {
+        const { appName, networkUrl, chainId, darkMode } = options;
+        const walletLink = new Web3Bundle.WalletLink({
+          appName,
+          darkMode,
+        });
+        const provider = walletLink.makeWeb3Provider(networkUrl, chainId);
+        await provider.enable();
+        return provider;
+      },
+    };
+  }
+
+  return opt;
+})();
+
+let web3Modal;
+
+const signIn = async () => {
+  const walletProvider = await web3Modal.connect();
+  const provider = new ethers.providers.Web3Provider(walletProvider);
+
+  const [address] = await provider.listAccounts();
+  if (!address) {
+    throw new Error('Address not found.');
+  }
+
+  let ens;
+  try {
+    ens = await provider.lookupAddress(address);
+  } catch (error) {
+    console.error(error);
+  }
+
+  let { chainId } = await provider.getNetwork();
+
+  const message = await fetch(`${env.prefix}/message`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': getCSRF(),
+      },
+      credentials: 'include',
+      body: JSON.stringify({
+        chainId,
+        address,
+      })
+    }).then((res) => res.text());
+
+  const signature = await provider.getSigner().signMessage(message);
+
+  fetch(`${env.prefix}/signature`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRF-Token': getCSRF(),
+    },
+    credentials: 'include',
+    redirect: 'follow',
+    body: JSON.stringify({ signature, ens }),
+  });
+};
+
+const getCSRF = () => {
+  return document.querySelector('meta[name="csrf-token"]').content;
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+  web3Modal = new Web3Modal({
+    network: env.network,
+    cacheProvider: true,
+    providerOptions,
+  });
+
+  let signInButton = document.getElementById('siwe');
+  signInButton.addEventListener('click', () => signIn());
+});
