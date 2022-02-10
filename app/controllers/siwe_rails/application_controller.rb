@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'siwe'
+
 module SiweRails
   class ApplicationController < ActionController::Base
     SESSION_SIWE_MESSAGE_KEY = 'siwe/message' # Session key
@@ -18,19 +20,19 @@ module SiweRails
         sign_params
       )
       session[SESSION_SIWE_MESSAGE_KEY] = message.to_json_string
-      render plain: message.personal_sign
+      render plain: message.prepare_message
     end
 
     # /#{prefix}/signature
     def signature
       message = Siwe::Message.from_json_string session[SESSION_SIWE_MESSAGE_KEY]
-      message.signature = params.require(:signature)
 
-      if message.validate
+      if message.validate(params.require(:signature))
         session[SESSION_SIWE_MESSAGE_KEY] = nil
-        session[SiweRails.SIWE_ADDRESS] = params[:ens]
-        session[SiweRails.SIWE_ENS] = params[message.address]
-        redirect_to SiweRails.redirect_uri
+        session[SiweRails.SIWE_ENS] = params[:ens]
+        session[SiweRails.SIWE_ADDRESS] = message.address
+
+        redirect_to SiweRails.redirect_uri, status: 308
       else
         head :bad_request
       end

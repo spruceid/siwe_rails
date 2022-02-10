@@ -4,123 +4,130 @@ require 'siwe_rails/version'
 require 'siwe_rails/engine'
 
 module SiweRails
-  SIWE_ADDRESS = 'siwe/address' # Session address key
-  SIWE_ENS = 'siwe/ens' # Session address key
+  # Session address key
+  def self.SIWE_ADDRESS
+    'siwe/address'
+  end
+
+  # Session address key
+  def self.SIWE_ENS
+    'siwe/ens'
+  end
 
   # Prefix to use when mounting the routes
-  def prefix
-    if Rails.application.x.siwe.prefix.nil?
+  def self.prefix
+    if Rails.configuration.x.siwe.prefix.nil?
       'siwe'
     else
-      Rails.application.x.siwe.prefix
+      Rails.configuration.x.siwe.prefix
     end
   end
 
   # Message statement
-  def statement
-    if Rails.application.x.siwe.statement.nil?
+  def self.statement
+    if Rails.configuration.x.siwe.statement.nil?
       'SIWE'
     else
-      Rails.application.x.siwe.statement
+      Rails.configuration.x.siwe.statement
     end
   end
 
   # Message expiration time in milliseconds, 7 days by default
-  def expiration_time
-    if Rails.application.x.siwe.expiration_time.nil?
+  def self.expiration_time
+    if Rails.configuration.x.siwe.expiration_time.nil?
       7 * 24 * 60 * 60 * 1000
     else
-      Rails.application.x.siwe.expiration_time
+      Rails.configuration.x.siwe.expiration_time
     end
   end
 
   # Message minimum datetime validity
-  def not_before
-    if Rails.application.x.siwe.not_before.nil?
+  def self.not_before
+    if Rails.configuration.x.siwe.not_before.nil?
       Time.now.utc.iso8601
     else
-      Rails.application.x.siwe.not_before
+      Rails.configuration.x.siwe.not_before
     end
   end
 
   # Whether to add a request id
-  def request_id
-    if Rails.application.x.siwe.request_id.nil?
+  def self.request_id
+    if Rails.configuration.x.siwe.request_id.nil?
       false
     else
-      Rails.application.x.siwe.request_id
+      Rails.configuration.x.siwe.request_id
     end
   end
 
   # Resources
-  def resources
-    if Rails.application.x.siwe.resources.nil?
+  def self.resources
+    if Rails.configuration.x.siwe.resources.nil?
       nil
     else
-      Rails.application.x.siwe.resources
+      Rails.configuration.x.siwe.resources
     end
   end
 
   # Redirect URL to receive user information on success
-  def redirect_uri
-    if Rails.application.x.siwe.redirect_uri.nil?
+  def self.redirect_uri
+    if Rails.configuration.x.siwe.redirect_uri.nil?
       '/'
     else
-      Rails.application.x.siwe.redirect_uri
+      Rails.configuration.x.siwe.redirect_uri
     end
   end
 
   # Network to use with sign in
-  def network
-    if Rails.application.x.siwe.network.nil?
+  def self.network
+    if Rails.configuration.x.siwe.network.nil?
       'mainnet'
     else
-      Rails.application.x.siwe.network
+      Rails.configuration.x.siwe.network
     end
   end
 
   # Infura Key
-  def infura
-    if Rails.application.x.siwe.infura.nil?
+  def self.infura
+    if Rails.configuration.x.siwe.infura.nil?
       ''
     else
-      Rails.application.x.siwe.infura
+      Rails.configuration.x.siwe.infura
     end
   end
 
   # Portis ID
-  def portis
-    if Rails.application.x.siwe.portis.nil?
+  def self.portis
+    if Rails.configuration.x.siwe.portis.nil?
       ''
     else
-      Rails.application.x.siwe.portis
+      Rails.configuration.x.siwe.portis
     end
   end
 
   # Fortmatic Key
-  def fortmatic
-    if Rails.application.x.siwe.fortmatic.nil?
+  def self.fortmatic
+    if Rails.configuration.x.siwe.fortmatic.nil?
       ''
     else
-      Rails.application.x.siwe.fortmatic
+      Rails.configuration.x.siwe.fortmatic
     end
   end
 
   # Whether to enable Torus wallet
-  def torus
-    if Rails.application.x.siwe.torus.nil?
+  def self.torus
+    if Rails.configuration.x.siwe.torus.nil?
       false
     else
-      Rails.application.x.siwe.torus
+      Rails.configuration.x.siwe.torus
     end
   end
 
   # Whether to enable Coinbase wallet
-  def coinbase
-    if Rails.application.x.siwe.coinbase.nil?
+  def self.coinbase
+    if Rails.configuration.x.siwe.coinbase.nil?
       false
     else
-      Rails.application.x.siwe.coinbase
+      Rails.configuration.x.siwe.coinbase
     end
   end
 
