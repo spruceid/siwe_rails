@@ -15,7 +15,7 @@ module SiweRails
       message = Siwe::Message.new(
         request.host,
         request.params[:address],
-        request.url,
+        request.host,
         '1',
         sign_params
       )
