@@ -13,9 +13,9 @@ module SiweRails
     # /#{prefix}/message
     def message
       message = Siwe::Message.new(
-        request.host,
+        request.host_with_port,
         request.params[:address],
-        request.host,
+        "#{request.protocol}#{request.host_with_port}",
         '1',
         sign_params
       )
