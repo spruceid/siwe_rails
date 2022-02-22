@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.licenses = ['MIT', 'Apache-2.0']
 
   spec.files = Dir.chdir(File.expand_path(__dir__)) do
-    Dir['{app,config,db,lib}/**/*', 'MIT-LICENSE', 'Rakefile', 'README.md']
+    Dir['{app,config,db,lib}/**/*', 'LICENSE-MIT', 'LICENSE-APACHE', 'Rakefile', 'README.md']
   end
 
   spec.add_dependency 'rails', '>= 7.0.1'
