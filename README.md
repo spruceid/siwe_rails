@@ -1,5 +1,12 @@
 # SIWERails
+[![GitHub Issues](https://img.shields.io/github/issues/spruceid/siwe_rails)](https://github.com/spruceid/siwe_rails/issues)
+[![GitHub license](https://img.shields.io/github/license/spruceid/siwe_rails)](LICENSE)
+[![Rails](https://img.shields.io/badge/Rails-%3E%3D%207.0.1-red)](https://github.com/spruceid/siwe_rails/blob/main/Gemfile.lock)
+[![Visitors](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Fspruceid%2Fsiwe_rails&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false)](https://hits.seeyoufarm.com)
+
+
 Rails gem that adds SIWE local sign in routes.
+
 
 ## Installation
 Add this line to your application's Gemfile:
